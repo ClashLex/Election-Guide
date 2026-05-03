@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Election Guide — Your Vote, Explained</title>
+  <meta name="description" content="A non-partisan, interactive guide to understanding and participating in the election process." />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+  
+  <script>
+    (function() {
+      var saved = localStorage.getItem('eg_dark');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (saved === 'true' || (saved === null && prefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
+
+  <style>
+    :root {
+      --bg: #F5F0E8;
+      --bg2: #EDE8DC;
+      --card: #FDFAF5;
+      --card2: #F0EBE0;
+      --ink: #1C1810;
+      --ink2: #4A3F2F;
+      --ink3: #8A7A65;
+      --line: #D8CFBE;
+      --navy: #1A3C6E;
+      --gold: #C9A84C;
+      --gold-light: #E8D28A;
+      --amber: #D4601A;
+      --teal: #2A7A6E;
+      --focus: #C9A84C;
+      --shadow: rgba(28,24,16,0.12);
+      --shadow-heavy: rgba(28,24,16,0.22);
+    }
+    [data-theme="dark"] {
+      --bg: #0E1520;
+      --bg2: #111928;
+      --card: #161F30;
+      --card2: #1C2840;
+      --ink: #EEE8DA;
+      --ink2: #B8AA96;
+      --ink3: #7A6E5E;
+      --line: #243050;
+      --navy: #6AA0D8;
+      --gold: #D4A84C;
+      --gold-light: #8A6820;
+      --amber: #E8803A;
+      --teal: #3AA896;
+      --focus: #D4A84C;
+      --shadow: rgba(0,0,0,0.4);
+      --shadow-heavy: rgba(0,0,0,0.6);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; height: 100%; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      height: 100%;
+      transition: background 0.25s, color 0.25s;
+      overflow-x: hidden;
+    }
+    *:focus-visible { outline: 2.5px solid var(--focus); outline-offset: 3px; border-radius: 3px; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+    
+    /* === LAYOUT === */
+    #app { display: flex; flex-direction: column; min-height: 100vh; }
+    
+    /* HEADER */
+    #header {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--card);
+      border-bottom: 1px solid var(--line);
+      padding: 0 1.5rem;
+      height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 1px 12px var(--shadow);
+      transition: background 0.25s, border-color 0.25s;
+    }
+    .header-logo {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.1rem; color: var(--navy);
+      text-decoration: none;
+    }
+    .header-logo .logo-icon {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--navy); color: var(--card);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; flex-shrink: 0;
+      transition: background 0.25s;
+    }
+    .header-actions { display: flex; align-items: center; gap: 0.5rem; }
+    .icon-btn {
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 1px solid var(--line); background: transparent;
+      color: var(--ink2); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.95rem; transition: all 0.2s;
+    }
+    .icon-btn:hover { background: var(--bg2); color: var(--navy); border-color: var(--navy); }
+
+    /* PROGRESS BAR */
+    #progress-bar-wrap {
+      background: var(--card2);
+      border-bottom: 1px solid var(--line);
+      padding: 0.45rem 1.5rem;
+      display: flex; align-items: center; gap: 1rem;
+      transition: background 0.25s;
+    }
+    .pb-track {
+      flex: 1; height: 5px; background: var(--line);
+      border-radius: 99px; overflow: hidden;
+    }
+    .pb-fill {
+      height: 100%; background: linear-gradient(90deg, var(--gold), var(--amber));
+      border-radius: 99px;
+      transition: width 0.4s cubic-bezier(.4,0,.2,1);
+    }
+    .pb-label { font-size: 0.78rem; color: var(--ink3); white-space: nowrap; min-width: 120px; text-align: right; }
+    
+    /* BODY LAYOUT */
+    #body { display: flex; flex: 1; }
+    
+    /* SIDEBAR */
+    #sidebar {
+      width: 220px; flex-shrink: 0;
+      background: var(--card);
+      border-right: 1px solid var(--line);
+      padding: 1.5rem 0.75rem;
+      position: sticky; top: 96px;
+      height: calc(100vh - 96px);
+      overflow-y: auto;
+      transition: background 0.25s, border-color 0.25s;
+    }
+    .nav-label {
+      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--ink3);
+      padding: 0.4rem 0.75rem; margin-bottom: 0.3rem;
+    }
+    .nav-link {
+      display: flex; align-items: center; gap: 0.7rem;
+      padding: 0.6rem 0.75rem; border-radius: 8px;
+      color: var(--ink2); text-decoration: none;
+      font-size: 0.88rem; font-weight: 500;
+      transition: all 0.18s; margin-bottom: 0.15rem;
+    }
+    .nav-link:hover { background: var(--bg2); color: var(--navy); }
+    .nav-link.active { background: var(--navy); color: #fff; }
+    .nav-link .ni { width: 18px; text-align: center; font-size: 0.9rem; }
+    
+    /* MAIN */
+    #main { flex: 1; overflow-y: auto; }
+    
+    /* MOBILE NAV */
+    #mobile-nav {
+      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--card);
+      border-top: 1px solid var(--line);
+      height: 58px; z-index: 100;
+      padding: 0 0.5rem;
+      justify-content: space-around; align-items: center;
+      box-shadow: 0 -2px 12px var(--shadow);
+    }
+    .mob-nav-btn {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 0.2rem;
+      color: var(--ink3); background: none; border: none;
+      cursor: pointer; flex: 1; height: 100%;
+      font-size: 0.6rem; font-weight: 500; font-family: 'DM Sans', sans-serif;
+      transition: color 0.18s;
+    }
+    .mob-nav-btn i { font-size: 1.2rem; }
+    .mob-nav-btn:hover, .mob-nav-btn.active { color: var(--navy); }
+
+    /* SECTIONS */
+    section { min-height: 100vh; padding: 5rem 2.5rem 4rem; position: relative; }
+    section + section { border-top: 1px solid var(--line); }
+    .section-tag {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--gold);
+      border: 1px solid var(--gold-light); border-radius: 99px;
+      padding: 0.3rem 0.8rem; margin-bottom: 1.2rem;
+    }
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      color: var(--ink); line-height: 1.2; margin-bottom: 0.75rem;
+    }
+    .section-sub { color: var(--ink3); font-size: 1rem; max-width: 540px; line-height: 1.65; }
+    .section-header { margin-bottom: 2.5rem; }
+    .max-w { max-width: 860px; margin: 0 auto; }
+
+    /* === HERO === */
+    #home {
+      background: var(--card);
+      display: flex; align-items: center;
+      padding-top: 6rem; padding-bottom: 5rem;
+      overflow: hidden;
+    }
+    .hero-inner {
+      max-width: 900px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 3rem; align-items: center;
+    }
+    .hero-eyebrow {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--amber);
+      margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .hero-eyebrow::before {
+      content: ''; display: block;
+      width: 28px; height: 2px; background: var(--amber);
+    }
+    .hero-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.8rem, 6vw, 4.2rem);
+      line-height: 1.08; color: var(--ink);
+      margin-bottom: 1.4rem;
+    }
+    .hero-title em { font-style: italic; color: var(--navy); }
+    .hero-desc { color: var(--ink2); font-size: 1.05rem; line-height: 1.7; margin-bottom: 2rem; max-width: 420px; }
+    .btn { 
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      padding: 0.75rem 1.75rem; border-radius: 8px;
+      font-size: 0.9rem; font-weight: 600; font-family: 'DM Sans', sans-serif;
+      cursor: pointer; text-decoration: none; border: 2px solid transparent;
+      transition: all 0.2s; min-height: 44px;
+    }
+    .btn-primary { background: var(--navy); color: #fff; }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 6px 18px var(--shadow-heavy); }
+    .btn-outline { background: transparent; border-color: var(--gold); color: var(--navy); }
+    .btn-outline:hover { background: var(--gold); color: #fff; }
+    .hero-btns { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    
+    /* Hero Visual */
+    .hero-visual {
+      position: relative; display: flex;
+      align-items: center; justify-content: center;
+    }
+    .hero-orb {
+      width: 280px; height: 280px; border-radius: 50%;
+      background: radial-gradient(circle at 38% 40%, var(--card2), var(--bg2));
+      border: 2px solid var(--line);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      box-shadow: 0 12px 40px var(--shadow);
+    }
+    .hero-orb-icon { font-size: 5rem; color: var(--navy); position: relative; z-index: 1; }
+    .orb-ring {
+      position: absolute; border-radius: 50%;
+      border: 1.5px dashed var(--line);
+      animation: spin-ring 40s linear infinite;
+    }
+    .orb-ring-1 { width: 92%; height: 92%; }
+    .orb-ring-2 { width: 76%; height: 76%; animation-direction: reverse; animation-duration: 25s; }
+    @keyframes spin-ring { to { transform: rotate(360deg); } }
+    .hero-badge {
+      position: absolute; bottom: 10px; right: 10px;
+      background: var(--gold); color: var(--card);
+      width: 64px; height: 64px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; box-shadow: 0 4px 14px var(--shadow-heavy);
+      border: 3px solid var(--card);
+    }
+    .float-icon {
+      position: absolute;
+      opacity: 0; font-size: 1.6rem;
+      animation: float-up 0s linear infinite;
+    }
+    @keyframes float-up {
+      0%   { transform: translateY(0) translateX(0); opacity: 0; }
+      8%   { opacity: 0.18; }
+      88%  { opacity: 0.18; }
+      100% { transform: translateY(-280px) translateX(20px); opacity: 0; }
+    }
+    .hero-stats {
+      display: flex; gap: 1.5rem; margin-top: 2rem;
+      padding-top: 1.5rem; border-top: 1px solid var(--line);
+    }
+    .stat { display: flex; flex-direction: column; gap: 0.2rem; }
+    .stat-num { font-family: 'DM Serif Display', serif; font-size: 1.6rem; color: var(--navy); }
+    .stat-label { font-size: 0.72rem; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* === TIMELINE === */
+    #timeline { background: var(--bg); }
+    .tl-progress-bar {
+      width: 100%; height: 4px; background: var(--line);
+      border-radius: 99px; overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    .tl-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--amber));
+      border-radius: 99px;
+      transition: width 0.35s cubic-bezier(.4,0,.2,1);
+    }
+    .tl-stage {
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      background: var(--card);
+      margin-bottom: 0.65rem;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .tl-stage:hover { border-color: var(--navy); }
+    .tl-stage.active {
+      border-color: var(--gold);
+      border-left: 4px solid var(--gold);
+      box-shadow: 0 4px 18px var(--shadow);
+    }
+    .tl-stage-head {
+      padding: 1.1rem 1.3rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .stage-num {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--bg2); color: var(--ink3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .tl-stage.active .stage-num { background: var(--navy); color: #fff; }
+    .stage-icon-wrap {
+      width: 42px; height: 42px; border-radius: 10px;
+      background: var(--bg2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; color: var(--ink3); flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .tl-stage.active .stage-icon-wrap { background: var(--navy); color: #fff; }
+    .stage-title-wrap { flex: 1; }
+    .stage-title { font-weight: 600; font-size: 0.95rem; color: var(--ink); }
+    .stage-subtitle { font-size: 0.78rem; color: var(--ink3); margin-top: 0.15rem; }
+    .stage-chevron {
+      color: var(--ink3); font-size: 0.8rem;
+      transition: transform 0.3s;
+    }
+    .tl-stage.active .stage-chevron { transform: rotate(180deg); }
+    .tl-stage-body {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.35s cubic-bezier(.4,0,.2,1);
+    }
+    .tl-stage.active .tl-stage-body { max-height: 300px; }
+    .tl-stage-content {
+      padding: 0 1.3rem 1.3rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    }
+    .stage-covers { }
+    .stage-covers-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink3); margin-bottom: 0.4rem; }
+    .stage-covers-text { font-size: 0.88rem; color: var(--ink2); line-height: 1.6; }
+    .stage-action {
+      background: var(--bg2); border-radius: 8px; padding: 0.9rem 1rem;
+      border-left: 3px solid var(--gold);
+    }
+    .stage-action-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.35rem; }
+    .stage-action-text { font-size: 0.88rem; color: var(--navy); font-weight: 500; line-height: 1.55; }
+    /* Mobile horizontal scroll */
+    .tl-mobile-scroll { display: none; gap: 1rem; overflow-x: auto; padding-bottom: 0.75rem; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+    .tl-mobile-card {
+      flex: none; width: 280px; background: var(--card);
+      border: 1.5px solid var(--line); border-radius: 12px;
+      padding: 1.2rem; scroll-snap-align: start;
+      cursor: pointer; transition: border-color 0.2s;
+    }
+    .tl-mobile-card.active { border-color: var(--gold); border-top: 3px solid var(--gold); }
+    .tl-desktop { display: block; }
+
+    /* === ELIGIBILITY === */
+    #eligibility { background: var(--card); }
+    .elig-card {
+      background: var(--bg); border: 1.5px solid var(--line);
+      border-radius: 16px; padding: 2.5rem;
+      max-width: 560px; margin: 0 auto;
+      box-shadow: 0 6px 30px var(--shadow);
+    }
+    .step-indicator {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+    .step-dots { display: flex; gap: 0.5rem; }
+    .step-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--line); transition: background 0.25s, transform 0.25s;
+    }
+    .step-dot.done { background: var(--gold); }
+    .step-dot.current { background: var(--navy); transform: scale(1.4); }
+    .step-text { font-size: 0.8rem; color: var(--ink3); }
+    .elig-progress { width: 100%; height: 4px; background: var(--line); border-radius: 99px; overflow: hidden; margin-bottom: 2.5rem; }
+    .elig-progress-fill { height: 100%; background: linear-gradient(90deg, var(--navy), var(--teal)); border-radius: 99px; transition: width 0.3s ease; }
+    .elig-question {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.7rem; line-height: 1.25; color: var(--ink);
+      margin-bottom: 2rem; text-align: center;
+      min-height: 80px; display: flex; align-items: center; justify-content: center;
+    }
+    .elig-btns { display: flex; flex-direction: column; gap: 0.75rem; }
+    .elig-btn {
+      width: 100%; min-height: 52px; padding: 0.9rem 1.5rem;
+      border-radius: 10px; font-size: 1rem; font-weight: 600;
+      cursor: pointer; font-family: 'DM Sans', sans-serif;
+      transition: all 0.18s; border: 2px solid;
+    }
+    .elig-btn-yes { background: var(--navy); color: #fff; border-color: var(--navy); }
+    .elig-btn-yes:hover { opacity: 0.86; transform: translateY(-1px); }
+    .elig-btn-no { background: transparent; border-color: var(--navy); color: var(--navy); }
+    .elig-btn-no:hover { background: var(--bg2); }
+    .elig-btn-sure { background: transparent; border-color: var(--line); color: var(--ink3); }
+    .elig-btn-sure:hover { background: var(--card2); color: var(--ink2); border-color: var(--ink3); }
+    /* Result */
+    .elig-result { text-align: center; animation: fade-in 0.4s ease; }
+    @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .result-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+    .result-title {
+      font-family: 'DM Serif Display', serif; font-size: 1.7rem;
+      color: var(--ink); margin-bottom: 0.8rem;
+    }
+    .result-body { color: var(--ink2); line-height: 1.7; font-size: 0.95rem; margin-bottom: 1.5rem; }
+    .result-link {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: var(--navy); color: #fff;
+      padding: 0.7rem 1.5rem; border-radius: 8px;
+      text-decoration: none; font-weight: 600; font-size: 0.9rem;
+      margin-bottom: 1.5rem; transition: opacity 0.2s;
+    }
+    .result-link:hover { opacity: 0.85; }
+    .reset-link {
+      background: none; border: none; color: var(--ink3);
+      font-size: 0.85rem; cursor: pointer; font-family: 'DM Sans', sans-serif;
+      text-decoration: underline; transition: color 0.2s;
+    }
+    .reset-link:hover { color: var(--navy); }
+
+    /* === FAQ === */
+    #faq { background: var(--bg); }
+    .faq-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 2rem; }
+    .faq-chip {
+      padding: 0.5rem 1rem; border-radius: 99px;
+      border: 1.5px solid var(--line); background: var(--card);
+      color: var(--ink2); font-size: 0.82rem; font-weight: 500;
+      cursor: pointer; font-family: 'DM Sans', sans-serif;
+      transition: all 0.18s; min-height: 36px;
+    }
+    .faq-chip:hover { border-color: var(--navy); color: var(--navy); background: var(--card2); }
+    .faq-chip.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+    .faq-answer-card {
+      background: var(--card); border: 1.5px solid var(--line);
+      border-radius: 12px; padding: 1.5rem 1.75rem;
+      animation: fade-in 0.3s ease;
+      margin-bottom: 2rem;
+    }
+    .faq-answer-header { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 0.75rem; }
+    .faq-emoji { font-size: 2rem; flex-shrink: 0; }
+    .faq-q { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: var(--ink); line-height: 1.3; }
+    .faq-a { color: var(--ink2); font-size: 0.92rem; line-height: 1.7; margin-bottom: 1rem; }
+    .faq-source-link {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      color: var(--teal); font-size: 0.82rem; font-weight: 600;
+      text-decoration: none; border-bottom: 1px solid var(--teal);
+      transition: opacity 0.2s;
+    }
+    .faq-source-link:hover { opacity: 0.7; }
+    .faq-search-wrap { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+    .faq-search-label { font-size: 0.85rem; font-weight: 600; color: var(--ink2); margin-bottom: 0.6rem; display: block; }
+    .faq-input-wrap { position: relative; }
+    .faq-input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--ink3); font-size: 0.85rem; }
+    .faq-input {
+      width: 100%; min-height: 48px; padding: 0.75rem 1rem 0.75rem 2.8rem;
+      border: 2px solid var(--line); border-radius: 10px;
+      background: var(--card); color: var(--ink);
+      font-size: 0.92rem; font-family: 'DM Sans', sans-serif;
+      transition: border-color 0.2s;
+    }
+    .faq-input:focus { border-color: var(--navy); outline: none; }
+    .faq-input::placeholder { color: var(--ink3); }
+
+    /* === PROGRESS TRACKER === */
+    #progress-section { background: var(--card); }
+    .checklist { display: flex; flex-direction: column; gap: 0.65rem; }
+    .check-item {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1rem 1.2rem; border-radius: 10px;
+      border: 2px solid var(--line); background: var(--bg);
+      cursor: pointer; transition: all 0.2s; min-height: 56px;
+    }
+    .check-item:hover { border-color: var(--navy); }
+    .check-item.checked { border-color: var(--gold); background: var(--card2); }
+    .check-box {
+      width: 28px; height: 28px; border-radius: 6px;
+      border: 2px solid var(--line);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.2s; font-size: 0.75rem; color: #fff;
+    }
+    .check-item.checked .check-box { background: var(--gold); border-color: var(--gold); }
+    .check-text {
+      font-size: 0.92rem; font-weight: 500; color: var(--ink);
+      transition: all 0.2s; line-height: 1.4;
+    }
+    .check-item.checked .check-text { text-decoration: line-through; color: var(--ink3); }
+    .check-item input[type="checkbox"] { position: absolute; opacity: 0; pointer-events: none; }
+    .tracker-footer { margin-top: 2rem; text-align: center; }
+    .reset-btn {
+      background: none; border: none; color: #C84040;
+      font-size: 0.85rem; cursor: pointer; font-family: 'DM Sans', sans-serif;
+      text-decoration: underline; transition: opacity 0.2s;
+    }
+    .reset-btn:hover { opacity: 0.7; }
+
+    /* FOOTER */
+    footer {
+      background: var(--ink); color: var(--ink3);
+      padding: 1.5rem 2.5rem; font-size: 0.8rem;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;
+      border-top: 1px solid var(--line);
+    }
+    .footer-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 99px; padding: 0.3rem 0.8rem;
+      font-size: 0.72rem; color: rgba(255,255,255,0.5);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      #sidebar { display: none; }
+      #mobile-nav { display: flex; }
+      #main { padding-bottom: 58px; }
+      section { padding: 4rem 1.2rem 3rem; }
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-visual { display: none; }
+      .hero-stats { flex-wrap: wrap; gap: 1rem; }
+      .tl-desktop { display: none; }
+      .tl-mobile-scroll { display: flex; }
+      .tl-stage-content { grid-template-columns: 1fr; }
+      .elig-card { padding: 1.5rem; }
+      .elig-question { font-size: 1.35rem; min-height: 60px; }
+      #progress-bar-wrap .pb-label { display: none; }
+      footer { flex-direction: column; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .faq-chips { gap: 0.4rem; }
+      .faq-chip { font-size: 0.76rem; padding: 0.4rem 0.8rem; }
+    }
+  </style>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <header id="header">
+    <a href="#home" class="header-logo" aria-label="Election Guide Home">
+      <div class="logo-icon"><i class="fa-solid fa-check-to-slot"></i></div>
+      <span>Election Guide</span>
+    </a>
+    <div class="header-actions">
+      <button class="icon-btn" id="dark-toggle" aria-label="Toggle dark mode">
+        <i class="fa-solid fa-moon" id="dark-icon"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- PROGRESS BAR -->
+  <div id="progress-bar-wrap">
+    <div class="pb-track">
+      <div class="pb-fill" id="pb-fill" style="width: 0%"></div>
+    </div>
+    <div class="pb-label" id="pb-label">0 of 6 steps complete</div>
+  </div>
+
+  <div id="body">
+    <!-- SIDEBAR -->
+    <aside id="sidebar" role="navigation" aria-label="Section navigation">
+      <div class="nav-label">Navigate</div>
+      <a href="#home" class="nav-link active" data-nav="home"><i class="fa-solid fa-house ni"></i> Home</a>
+      <a href="#timeline" class="nav-link" data-nav="timeline"><i class="fa-solid fa-timeline ni"></i> Timeline</a>
+      <a href="#eligibility" class="nav-link" data-nav="eligibility"><i class="fa-solid fa-clipboard-check ni"></i> Eligibility</a>
+      <a href="#faq" class="nav-link" data-nav="faq"><i class="fa-solid fa-circle-question ni"></i> FAQ</a>
+      <a href="#progress-section" class="nav-link" data-nav="progress-section"><i class="fa-solid fa-chart-line ni"></i> My Progress</a>
+    </aside>
+
+    <main id="main">
+
+      <!-- HERO -->
+      <section id="home">
+        <div class="hero-inner">
+          <div class="hero-left">
+            <div class="hero-eyebrow">Non-partisan civic education</div>
+            <h1 class="hero-title">Your Vote,<br><em>Explained.</em></h1>
+            <p class="hero-desc">A clear, honest guide to every step of the election process — from registration to result. No spin. Just facts.</p>
+            <div class="hero-btns">
+              <a href="#timeline" class="btn btn-primary"><i class="fa-solid fa-arrow-right"></i> Get Started</a>
+              <a href="#eligibility" class="btn btn-outline">Check My Eligibility</a>
+            </div>
+            <div class="hero-stats">
+              <div class="stat"><span class="stat-num">6</span><span class="stat-label">Timeline Stages</span></div>
+              <div class="stat"><span class="stat-num">8</span><span class="stat-label">FAQ Topics</span></div>
+              <div class="stat"><span class="stat-num">0</span><span class="stat-label">Data Stored</span></div>
+            </div>
+          </div>
+          <div class="hero-visual" aria-hidden="true">
+            <div class="hero-orb">
+              <div class="orb-ring orb-ring-1"></div>
+              <div class="orb-ring orb-ring-2"></div>
+              <i class="fa-solid fa-check-to-slot hero-orb-icon"></i>
+              <div class="float-icon" style="left:10%;animation-duration:18s;animation-delay:0s;"><i class="fa-solid fa-box-archive"></i></div>
+              <div class="float-icon" style="left:60%;animation-duration:13s;animation-delay:3s;"><i class="fa-solid fa-check"></i></div>
+              <div class="float-icon" style="left:35%;animation-duration:22s;animation-delay:6s;"><i class="fa-regular fa-flag"></i></div>
+            </div>
+            <div class="hero-badge"><i class="fa-solid fa-shield-halved"></i></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TIMELINE -->
+      <section id="timeline">
+        <div class="max-w">
+          <div class="section-header">
+            <div class="section-tag"><i class="fa-solid fa-timeline"></i> Phase Guide</div>
+            <h2 class="section-title">Election Timeline</h2>
+            <p class="section-sub">Understand every key phase of the election process from first registration to final result.</p>
+          </div>
+          <div class="tl-progress-bar">
+            <div class="tl-progress-fill" id="tl-progress-fill" style="width:16.6%"></div>
+          </div>
+          <!-- Desktop -->
+          <div class="tl-desktop" id="tl-desktop"></div>
+          <!-- Mobile horizontal -->
+          <div class="tl-mobile-scroll" id="tl-mobile"></div>
+        </div>
+      </section>
+
+      <!-- ELIGIBILITY -->
+      <section id="eligibility">
+        <div class="max-w">
+          <div class="section-header" style="text-align:center">
+            <div class="section-tag"><i class="fa-solid fa-clipboard-check"></i> Quick Check</div>
+            <h2 class="section-title">Eligibility Checker</h2>
+            <p class="section-sub" style="margin:0 auto">A private, 4-step questionnaire to assess your voting readiness. Nothing is stored or transmitted.</p>
+          </div>
+          <div class="elig-card" id="elig-container"></div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section id="faq">
+        <div class="max-w">
+          <div class="section-header">
+            <div class="section-tag"><i class="fa-solid fa-circle-question"></i> Answers</div>
+            <h2 class="section-title">FAQ Assistant</h2>
+            <p class="section-sub">Quick, factual answers to common questions about the election process.</p>
+          </div>
+          <div class="faq-chips" id="faq-chips"></div>
+          <div id="faq-answer-wrap"></div>
+          <div class="faq-search-wrap">
+            <label class="faq-search-label" for="faq-search">Ask another question...</label>
+            <div class="faq-input-wrap">
+              <i class="fa-solid fa-magnifying-glass faq-input-icon"></i>
+              <input id="faq-search" type="text" class="faq-input" placeholder="e.g. Can I vote early?" autocomplete="off" />
+            </div>
+            <div id="faq-search-result"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROGRESS TRACKER -->
+      <section id="progress-section">
+        <div class="max-w">
+          <div class="section-header">
+            <div class="section-tag"><i class="fa-solid fa-chart-line"></i> Your Journey</div>
+            <h2 class="section-title">My Progress</h2>
+            <p class="section-sub">Track your path to becoming fully election-ready.</p>
+          </div>
+          <div class="checklist" id="checklist"></div>
+          <div class="tracker-footer">
+            <button class="reset-btn" id="reset-btn">Reset My Progress</button>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <span>Election Guide Assistant &mdash; Independent Civic Education Project</span>
+        <span class="footer-badge"><i class="fa-solid fa-shield-halved"></i> Strictly Non-Partisan &bull; Educational Only</span>
+      </footer>
+    </main>
+  </div>
+
+  <!-- MOBILE NAV -->
+  <nav id="mobile-nav" aria-label="Mobile navigation">
+    <button class="mob-nav-btn active" aria-label="Home" onclick="scrollTo('#home',this)"><i class="fa-solid fa-house"></i></button>
+    <button class="mob-nav-btn" aria-label="Timeline" onclick="scrollTo('#timeline',this)"><i class="fa-solid fa-timeline"></i></button>
+    <button class="mob-nav-btn" aria-label="Eligibility" onclick="scrollTo('#eligibility',this)"><i class="fa-solid fa-clipboard-check"></i></button>
+    <button class="mob-nav-btn" aria-label="FAQ" onclick="scrollTo('#faq',this)"><i class="fa-solid fa-circle-question"></i></button>
+    <button class="mob-nav-btn" aria-label="My Progress" onclick="scrollTo('#progress-section',this)"><i class="fa-solid fa-chart-line"></i></button>
+  </nav>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const TIMELINE_STAGES = [
+  { title: "Voter Registration", icon: "fa-address-card", covers: "How to register to vote, key registration deadlines, and the basic eligibility requirements you'll need to meet.", action: "Check your registration status now and register before the deadline — don't leave it to the last minute." },
+  { title: "Candidate Nomination", icon: "fa-users", covers: "How candidates formally qualify for an election and get their name placed on the official ballot, including petition and filing requirements.", action: "Start learning who is running in your local area so you can make an informed decision." },
+  { title: "Campaigning Period", icon: "fa-bullhorn", covers: "What candidates do during the campaign period, how public debates work, and the basics of how campaign finance is regulated.", action: "Research candidates and review their publicly stated policy positions from official campaign sources." },
+  { title: "Voting Day", icon: "fa-person-booth", covers: "Where your designated polling station is, what identification you may need to bring, and exactly how the ballot process works.", action: "Make a solid voting plan — confirm your polling location, arrange transportation, and request time off if needed." },
+  { title: "Vote Counting", icon: "fa-list-ol", covers: "How ballots are collected and tabulated, who the accredited observers are, and what verification and audit procedures are in place.", action: "Follow only official government and election commission channels for results updates — avoid unofficial sources." },
+  { title: "Result Announcement", icon: "fa-bullseye", covers: "How final results are formally certified, how any disputes are resolved according to law, and how the official results are publicly announced.", action: "Stay informed from official government and election authority sources only throughout this final phase." }
+];
+
+const FAQ_DATA = [
+  { id:1, emoji:"📝", question:"How do I register?", answer:"You can register to vote online, by mail, or in person, depending on your state or region. Most places have an official election portal where you can complete the process in minutes. Check your local election authority's website for deadlines and specific requirements.", keywords:["register","sign up","enroll"] },
+  { id:2, emoji:"📅", question:"When is voting day?", answer:"In the United States, federal election day is the Tuesday following the first Monday in November. Many states also offer extended early voting periods before that date. Check your local election authority for exact dates in your area.", keywords:["when","date","day","time","schedule"] },
+  { id:3, emoji:"🪪", question:"What ID do I need?", answer:"Voter ID requirements vary significantly by state or region. Some require a government-issued photo ID, some accept non-photo documents, and others require no ID at the polling place at all. Always check your local requirements before election day.", keywords:["id","identification","license","card","photo"] },
+  { id:4, emoji:"🧮", question:"How are votes counted?", answer:"Ballots are processed by bipartisan teams of trained election workers and tallied using certified, audited tabulation equipment. The entire process is open to credentialed observers from all major parties and accredited non-partisan organizations.", keywords:["count","tally","tabulation","counted","process"] },
+  { id:5, emoji:"✏️", question:"What if I make a ballot mistake?", answer:"Do not attempt to cross out or correct a mistake on your ballot. Instead, notify a poll worker immediately and request a spoiled ballot replacement. You will be issued a fresh ballot to complete correctly before casting your vote.", keywords:["mistake","error","wrong","spoil","fix","correction"] },
+  { id:6, emoji:"✉️", question:"Can I vote by mail?", answer:"Mail-in and absentee voting rules differ by state. Some states automatically send ballots to all registered voters; others require you to apply in advance or provide a valid reason. Contact your local election office for the rules in your jurisdiction.", keywords:["mail","absentee","post","postal","home"] },
+  { id:7, emoji:"👀", question:"Who observes the count?", answer:"Credentialed poll watchers appointed by political parties and accredited non-partisan organizations are permitted by law to observe both the voting and counting processes. Their role is to ensure transparency and procedural compliance.", keywords:["observe","watcher","oversee","watch","monitor","transparent"] },
+  { id:8, emoji:"⏳", question:"I missed the deadline", answer:"If you missed the registration deadline, check whether your state offers Same-Day Registration. Many jurisdictions allow eligible citizens to register and vote on the same day during early voting or on election day itself.", keywords:["miss","deadline","late","expired","past","time"] }
+];
+
+const CHECKLIST_ITEMS = [
+  "I have confirmed my eligibility to vote",
+  "I am registered to vote",
+  "I know the date and location of my polling station",
+  "I have the required identification ready",
+  "I have reviewed the candidates and ballot measures",
+  "I have made a voting plan (transport, time off, childcare, etc.)"
+];
+
+const PROGRESS_MESSAGES = [
+  "Let's get you election-ready!",
+  "Great start — keep going!",
+  "Great start — keep going!",
+  "You're more than halfway there!",
+  "You're more than halfway there!",
+  "Almost ready — one more step!",
+  "You're fully election-ready! ✔️"
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let checklistState = [];
+let eligStep = 0, eligAnswers = {}, eligResult = null;
+let activeFaqId = null;
+let activeStage = 0;
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('eg_progress');
+    checklistState = saved ? JSON.parse(saved) : new Array(6).fill(false);
+  } catch(e) { checklistState = new Array(6).fill(false); }
+}
+function saveState() {
+  localStorage.setItem('eg_progress', JSON.stringify(checklistState));
+}
+
+// ============================================================
+// DARK MODE
+// ============================================================
+function initDark() {
+  const btn = document.getElementById('dark-toggle');
+  const icon = document.getElementById('dark-icon');
+  function update() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+  }
+  btn.addEventListener('click', () => {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    localStorage.setItem('eg_dark', String(!isDark));
+    update();
+  });
+  update();
+}
+
+// ============================================================
+// PROGRESS BAR (top)
+// ============================================================
+function updateTopProgress() {
+  const count = checklistState.filter(Boolean).length;
+  const pct = (count / 6) * 100;
+  document.getElementById('pb-fill').style.width = pct + '%';
+  document.getElementById('pb-label').textContent = `${count} of 6 — ${PROGRESS_MESSAGES[count]}`;
+}
+
+// ============================================================
+// TIMELINE
+// ============================================================
+function updateTimelineProgress() {
+  const pct = ((activeStage + 1) / TIMELINE_STAGES.length) * 100;
+  document.getElementById('tl-progress-fill').style.width = pct + '%';
+}
+
+function buildTimeline() {
+  const desktop = document.getElementById('tl-desktop');
+  const mobile = document.getElementById('tl-mobile');
+  desktop.innerHTML = '';
+  mobile.innerHTML = '';
+
+  TIMELINE_STAGES.forEach((s, i) => {
+    // Desktop
+    const el = document.createElement('div');
+    el.className = 'tl-stage' + (i === activeStage ? ' active' : '');
+    el.setAttribute('role', 'button');
+    el.setAttribute('aria-expanded', i === activeStage ? 'true' : 'false');
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('aria-label', `Stage ${i+1}: ${s.title}`);
+    el.innerHTML = `
+      <div class="tl-stage-head">
+        <div class="stage-num">${i+1}</div>
+        <div class="stage-icon-wrap"><i class="fa-solid ${s.icon}"></i></div>
+        <div class="stage-title-wrap">
+          <div class="stage-title">${s.title}</div>
+          <div class="stage-subtitle">${i === activeStage ? 'Currently viewing' : 'Click to expand'}</div>
+        </div>
+        <i class="fa-solid fa-chevron-down stage-chevron"></i>
+      </div>
+      <div class="tl-stage-body">
+        <div class="tl-stage-content">
+          <div class="stage-covers">
+            <div class="stage-covers-label">What it covers</div>
+            <div class="stage-covers-text">${s.covers}</div>
+          </div>
+          <div class="stage-action">
+            <div class="stage-action-label">Take Action</div>
+            <div class="stage-action-text">${s.action}</div>
+          </div>
+        </div>
+      </div>`;
+    el.addEventListener('click', () => setStage(i));
+    el.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') { e.preventDefault(); setStage(i); }});
+    desktop.appendChild(el);
+
+    // Mobile card
+    const mc = document.createElement('div');
+    mc.className = 'tl-mobile-card' + (i === activeStage ? ' active' : '');
+    mc.setAttribute('role', 'button');
+    mc.setAttribute('tabindex', '0');
+    mc.setAttribute('aria-label', `Stage ${i+1}: ${s.title}`);
+    mc.innerHTML = `
+      <div style="display:flex;align-items:center;gap:0.7rem;margin-bottom:0.75rem">
+        <div class="stage-icon-wrap" style="${i===activeStage?'background:var(--navy);color:#fff':''}"><i class="fa-solid ${s.icon}"></i></div>
+        <div>
+          <div style="font-size:0.7rem;color:var(--ink3);font-weight:600;text-transform:uppercase;letter-spacing:0.08em">Stage ${i+1}</div>
+          <div style="font-weight:600;font-size:0.9rem;color:var(--ink)">${s.title}</div>
+        </div>
+      </div>
+      <p style="font-size:0.82rem;color:var(--ink2);line-height:1.55;margin-bottom:0.75rem">${s.covers}</p>
+      <div class="stage-action" style="padding:0.6rem 0.8rem">
+        <div class="stage-action-label">Action</div>
+        <div class="stage-action-text" style="font-size:0.8rem">${s.action}</div>
+      </div>`;
+    mc.addEventListener('click', () => setStage(i));
+    mc.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') { e.preventDefault(); setStage(i); }});
+    mobile.appendChild(mc);
+  });
+}
+
+function setStage(i) {
+  activeStage = i;
+  buildTimeline();
+  updateTimelineProgress();
+}
+
+// ============================================================
+// ELIGIBILITY CHECKER
+// ============================================================
+const ELIG_STEPS = [
+  { id:'age',      q:'Are you 18 years of age or older?' },
+  { id:'citizen',  q:'Are you a citizen of this country?' },
+  { id:'residency',q:'Have you lived at your current address for at least 30 days?' },
+  { id:'registered',q:'Are you registered to vote?' }
+];
+
+const RESULTS = {
+  ready:            { icon:'✅', title:"You're Ready to Vote!", body:"Excellent! You meet all requirements and you're registered. Confirm your polling station and make a solid voting plan for election day.", link: null },
+  eligNotReg:       { icon:'📋', title:"You're Eligible — Let's Get You Registered", body:"You meet the age, citizenship, and residency requirements. The next step is getting registered before the deadline.", link: { text:'Register at voters.eci.gov.in', url:'https://voters.eci.gov.in' } },
+  notSureReg:       { icon:'🔍', title:"Let's Check Your Registration", body:"You appear eligible! Let's verify that your registration is active and up to date before election day.", link: { text:'Check status at voters.eci.gov.in', url:'https://voters.eci.gov.in' } },
+  under18:          { icon:'⏳', title:"Not Quite Yet — But Your Time is Coming!", body:"You can't vote quite yet, but you can still get involved by learning about the process and preparing to pre-register once you're eligible.", link: null },
+  notCitizen:       { icon:'🌍', title:"Thank You for Wanting to Participate", body:"Only citizens can vote in most national elections. Your civic interest matters, and you can still participate by volunteering, attending public forums, or learning more about the naturalization process.", link: null }
+};
+
+function renderElig() {
+  const c = document.getElementById('elig-container');
+  if (eligResult) {
+    const r = RESULTS[eligResult];
+    c.innerHTML = `
+      <div class="elig-result">
+        <div class="result-icon">${r.icon}</div>
+        <div class="result-title">${r.title}</div>
+        <p class="result-body">${r.body}</p>
+        ${r.link ? `<a class="result-link" href="${r.link.url}" target="_blank" rel="noopener noreferrer">${r.link.text} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75rem"></i></a><br>` : ''}
+        <button class="reset-link" onclick="resetElig()">↩ Start Over</button>
+      </div>`;
+    return;
+  }
+  const step = ELIG_STEPS[eligStep];
+  const pct = ((eligStep + 1) / ELIG_STEPS.length) * 100;
+  const dots = ELIG_STEPS.map((_,i) => `<div class="step-dot ${i < eligStep ? 'done' : i === eligStep ? 'current' : ''}"></div>`).join('');
+  c.innerHTML = `
+    <div class="step-indicator">
+      <div class="step-dots">${dots}</div>
+      <div class="step-text">Step ${eligStep+1} of ${ELIG_STEPS.length}</div>
+    </div>
+    <div class="elig-progress"><div class="elig-progress-fill" style="width:${pct}%"></div></div>
+    <div class="elig-question">${step.q}</div>
+    <div class="elig-btns">
+      <button class="elig-btn elig-btn-yes" onclick="answerElig('Yes')">Yes</button>
+      <button class="elig-btn elig-btn-no" onclick="answerElig('No')">No</button>
+      <button class="elig-btn elig-btn-sure" onclick="answerElig('Not Sure')">Not Sure</button>
+    </div>`;
+}
+
+function answerElig(answer) {
+  const id = ELIG_STEPS[eligStep].id;
+  eligAnswers[id] = answer;
+  if (id === 'age' && answer === 'No') { eligResult = 'under18'; renderElig(); return; }
+  if (id === 'citizen' && answer === 'No') { eligResult = 'notCitizen'; renderElig(); return; }
+  if (eligStep < ELIG_STEPS.length - 1) { eligStep++; renderElig(); return; }
+  if (answer === 'Yes') eligResult = 'ready';
+  else if (answer === 'No') eligResult = 'eligNotReg';
+  else eligResult = 'notSureReg';
+  renderElig();
+}
+
+function resetElig() { eligStep = 0; eligAnswers = {}; eligResult = null; renderElig(); }
+
+// ============================================================
+// FAQ
+// ============================================================
+function buildFaqChips() {
+  const wrap = document.getElementById('faq-chips');
+  FAQ_DATA.forEach(f => {
+    const btn = document.createElement('button');
+    btn.className = 'faq-chip';
+    btn.textContent = f.question;
+    btn.setAttribute('aria-label', `FAQ: ${f.question}`);
+    btn.dataset.id = f.id;
+    btn.addEventListener('click', () => showFaq(f.id, btn));
+    wrap.appendChild(btn);
+  });
+}
+
+function showFaq(id, btn) {
+  activeFaqId = id;
+  document.querySelectorAll('.faq-chip').forEach(c => c.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const f = FAQ_DATA.find(x => x.id === id);
+  document.getElementById('faq-answer-wrap').innerHTML = renderFaqCard(f);
+  document.getElementById('faq-search').value = '';
+  document.getElementById('faq-search-result').innerHTML = '';
+}
+
+function renderFaqCard(f) {
+  if (!f) return '';
+  return `<div class="faq-answer-card">
+    <div class="faq-answer-header">
+      <span class="faq-emoji">${f.emoji}</span>
+      <div class="faq-q">${f.question}</div>
+    </div>
+    <p class="faq-a">${f.answer}</p>
+    ${!f.isFallback ? `<a class="faq-source-link" href="https://voters.eci.gov.in" target="_blank" rel="noopener noreferrer">View Official Source <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.65rem"></i></a>` : ''}
+  </div>`;
+}
+
+function initFaqSearch() {
+  const input = document.getElementById('faq-search');
+  const result = document.getElementById('faq-search-result');
+  input.addEventListener('input', () => {
+    const q = input.value.toLowerCase().trim();
+    if (!q) { result.innerHTML = ''; return; }
+    document.querySelectorAll('.faq-chip').forEach(c => c.classList.remove('active'));
+    document.getElementById('faq-answer-wrap').innerHTML = '';
+    const match = FAQ_DATA.find(f =>
+      f.question.toLowerCase().includes(q) ||
+      f.keywords.some(k => q.includes(k) || k.includes(q))
+    );
+    result.innerHTML = match
+      ? renderFaqCard(match)
+      : renderFaqCard({ emoji:'ℹ️', question:'Question Not Found', answer:'For the most accurate and up-to-date answer, visit voters.eci.gov.in or contact your local election office directly.', isFallback: true });
+  });
+}
+
+// ============================================================
+// CHECKLIST / PROGRESS TRACKER
+// ============================================================
+function buildChecklist() {
+  const c = document.getElementById('checklist');
+  c.innerHTML = '';
+  CHECKLIST_ITEMS.forEach((item, i) => {
+    const lbl = document.createElement('label');
+    lbl.className = 'check-item' + (checklistState[i] ? ' checked' : '');
+    lbl.innerHTML = `
+      <input type="checkbox" ${checklistState[i] ? 'checked' : ''} aria-label="${item}">
+      <div class="check-box">${checklistState[i] ? '<i class="fa-solid fa-check"></i>' : ''}</div>
+      <span class="check-text">${item}</span>`;
+    lbl.addEventListener('change', () => {
+      checklistState[i] = !checklistState[i];
+      saveState();
+      buildChecklist();
+      updateTopProgress();
+    });
+    c.appendChild(lbl);
+  });
+}
+
+function initReset() {
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    if (confirm('Are you sure you want to reset all your progress?')) {
+      checklistState = new Array(6).fill(false);
+      saveState();
+      buildChecklist();
+      updateTopProgress();
+    }
+  });
+}
+
+// ============================================================
+// NAV ACTIVE STATE
+// ============================================================
+function initScrollSpy() {
+  const sections = ['home','timeline','eligibility','faq','progress-section'];
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        document.querySelectorAll('.nav-link').forEach(l => {
+          l.classList.toggle('active', l.dataset.nav === id);
+        });
+        document.querySelectorAll('.mob-nav-btn').forEach((b,i) => {
+          b.classList.toggle('active', sections[i] === id);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+}
+
+function scrollTo(selector, btn) {
+  document.querySelector(selector)?.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  loadState();
+  initDark();
+  updateTopProgress();
+  buildTimeline();
+  updateTimelineProgress();
+  renderElig();
+  buildFaqChips();
+  initFaqSearch();
+  buildChecklist();
+  initReset();
+  initScrollSpy();
+});
+</script>
+</body>
+</html>
