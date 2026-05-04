@@ -1,6 +1,6 @@
 # Election Guide Assistant
 
-> Built on **Google Antigravity** for **Virtual Prompt Wars** by **Google for Developers** and **Hack2Skill**.  
+> Built on **Google Antigravity** for **Virtual Prompt Wars** by **Google for Developers** and **Hack2Skill**...  
 > Live demo: https://clashlex.github.io/Election-Guide/
 
 ## Project Overview
